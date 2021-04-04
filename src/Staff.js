@@ -2,10 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import Vex from "vexflow";
 
 const VF = Vex.Flow;
-const keySignatures = Object.keys(VF.keySignature.keySpecs);
 
-function Staff({ notes }) {
-  const [key, setKey] = useState(keySignatures[0]);
+function Staff({ chosenKey: key, notes }) {
   const elementRef = useRef(null);
   const contextRef = useRef(null);
   const trebleRef = useRef(null);
@@ -14,16 +12,20 @@ function Staff({ notes }) {
   const setUpStaves = () => {
     contextRef.current.clear();
 
-    const keySignatureObj = new Vex.Flow.KeySignature(key);
+    const treble = new VF.Stave(0, 0, 400);
+    const bass = new VF.Stave(0, 60, 400);
 
-    const treble = new VF.Stave(10, 40, 400);
+    if (key) {
+      const keySignatureObj = new Vex.Flow.KeySignature(key);
+
+      bass.addModifier(keySignatureObj);
+      treble.addModifier(keySignatureObj);
+    }
+
     treble.addClef("treble").addTimeSignature("4/4");
-    treble.addModifier(keySignatureObj);
-    treble.setContext(contextRef.current).draw();
-
-    const bass = new VF.Stave(10, 120, 400);
     bass.addClef("bass").addTimeSignature("4/4");
-    bass.addModifier(keySignatureObj);
+
+    treble.setContext(contextRef.current).draw();
     bass.setContext(contextRef.current).draw();
 
     trebleRef.current = treble;
@@ -35,8 +37,9 @@ function Staff({ notes }) {
       elementRef.current,
       VF.Renderer.Backends.SVG
     );
-    renderer.resize(500, 500);
+    renderer.resize(500, 400);
     contextRef.current = renderer.getContext();
+    contextRef.current.scale(2, 2);
   }, []);
 
   useEffect(() => {
@@ -50,13 +53,17 @@ function Staff({ notes }) {
 
     setUpStaves();
 
-    const keyManager = new VF.KeyManager(key);
+    let alteredNotes = notes;
 
-    const alteredNotes = notes.map(({ name, octave }) => {
-      const { note } = keyManager.selectNote(name.toLowerCase());
-      return { name: note, octave };
-    });
+    if (key) {
+      const keyManager = new VF.KeyManager(key);
 
+      alteredNotes = notes.map(({ name, octave }) => {
+        const { note } = keyManager.selectNote(name.toLowerCase());
+        return { name: note, octave };
+      });
+    }
+    
     const keys = alteredNotes.map(
       ({ name, octave }) => `${name.toLowerCase()}/${octave}`
     );
@@ -82,13 +89,6 @@ function Staff({ notes }) {
 
   return (
     <div>
-      <select value={key} onChange={(e) => setKey(e.target.value)}>
-        {keySignatures.map((keySignature) => (
-          <option key={keySignature} value={keySignature}>
-            {keySignature}
-          </option>
-        ))}
-      </select>
       <div ref={elementRef}></div>
     </div>
   );
