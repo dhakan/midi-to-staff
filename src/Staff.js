@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Vex from "vexflow";
 
 const VF = Vex.Flow;
@@ -44,7 +44,7 @@ function Staff({ chosenKey: key, notes }) {
 
   useEffect(() => {
     setUpStaves();
-  }, [key]);
+  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!notes.length) {
@@ -63,7 +63,7 @@ function Staff({ chosenKey: key, notes }) {
         return { name: note, octave };
       });
     }
-    
+
     const keys = alteredNotes.map(
       ({ name, octave }) => `${name.toLowerCase()}/${octave}`
     );
@@ -85,7 +85,7 @@ function Staff({ chosenKey: key, notes }) {
     voices.forEach((voice) =>
       voice.draw(contextRef.current, trebleRef.current)
     );
-  }, [notes]);
+  }, [notes, key]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
