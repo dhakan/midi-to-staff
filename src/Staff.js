@@ -15,7 +15,7 @@ function Staff({ chosenKey: key, notes, landmarkEnabled }) {
       keys: ["c/2", "f/2", "c/3", "f/3", "c/4", "g/4", "c/5", "g/5", "c/6"],
       duration: "w",
     });
-    const backgroundColor = "rgba(0, 0, 0, 0.2)";
+    const backgroundColor = "rgba(0, 0, 0, 0.1)";
     staveNote.setStyle({
       fillStyle: backgroundColor,
     });
@@ -39,14 +39,12 @@ function Staff({ chosenKey: key, notes, landmarkEnabled }) {
     const bass = new VF.Stave(0, 60, 400);
 
     if (key) {
-      const keySignatureObj = new Vex.Flow.KeySignature(key);
-
-      bass.addModifier(keySignatureObj);
-      treble.addModifier(keySignatureObj);
+      bass.addModifier(new Vex.Flow.KeySignature(key));
+      treble.addModifier(new Vex.Flow.KeySignature(key));
     }
 
-    treble.addClef("treble").addTimeSignature("4/4");
-    bass.addClef("bass").addTimeSignature("4/4");
+    treble.addClef("treble");
+    bass.addClef("bass");
 
     treble.setContext(contextRef.current).draw();
     bass.setContext(contextRef.current).draw();
