@@ -64,7 +64,7 @@ function Staff({ chosenKey: key, notes, landmarkEnabled }) {
       elementRef.current,
       VF.Renderer.Backends.SVG
     );
-    renderer.resize(500, 400);
+    renderer.resize(500, 500);
     contextRef.current = renderer.getContext();
     contextRef.current.scale(2, 2);
   }, []);
