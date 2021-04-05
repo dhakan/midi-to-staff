@@ -7,10 +7,16 @@ body {
   font-size: 20px;
 }
 
+.message {
+  margin-top: 10px;
+}
+
 select {
   font-size: 20px;
 }
 
-.message {
+fieldset {
+  border: 0;
+  padding: 0;
   margin-top: 10px;
 }

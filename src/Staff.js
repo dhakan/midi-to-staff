@@ -3,11 +3,34 @@ import Vex from "vexflow";
 
 const VF = Vex.Flow;
 
-function Staff({ chosenKey: key, notes }) {
+function Staff({ chosenKey: key, notes, landmarkEnabled }) {
   const elementRef = useRef(null);
   const contextRef = useRef(null);
   const trebleRef = useRef(null);
   const bassRef = useRef(null);
+
+  const setUpLandmark = () => {
+    const staveNote = new VF.StaveNote({
+      clef: "treble",
+      keys: ["c/2", "f/2", "c/3", "f/3", "c/4", "g/4", "c/5", "g/5", "c/6"],
+      duration: "w",
+    });
+    const backgroundColor = "rgba(0, 0, 0, 0.2)";
+    staveNote.setStyle({
+      fillStyle: backgroundColor,
+    });
+
+    const renderedNotes = [staveNote];
+
+    const voices = [new VF.Voice({ num_beats: 4, beat_value: 4 })];
+    voices[0].addTickables(renderedNotes);
+
+    new VF.Formatter().joinVoices(voices).format(voices, 400);
+
+    voices.forEach((voice) =>
+      voice.draw(contextRef.current, trebleRef.current)
+    );
+  };
 
   const setUpStaves = () => {
     contextRef.current.clear();
@@ -30,6 +53,10 @@ function Staff({ chosenKey: key, notes }) {
 
     trebleRef.current = treble;
     bassRef.current = bass;
+
+    if (landmarkEnabled) {
+      setUpLandmark();
+    }
   };
 
   useEffect(() => {
@@ -44,7 +71,7 @@ function Staff({ chosenKey: key, notes }) {
 
   useEffect(() => {
     setUpStaves();
-  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [key, landmarkEnabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!notes.length) {

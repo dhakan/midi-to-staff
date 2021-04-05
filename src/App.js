@@ -8,6 +8,7 @@ const keySignatures = Object.keys(VF.keySignature.keySpecs);
 
 function App() {
   const [key, setKey] = useState("");
+  const [landmarkEnabled, setLandmarkEnabled] = useState(false);
   const notes = useMidi(logMessage);
   const [messages, setMessages] = useState([]);
 
@@ -17,15 +18,34 @@ function App() {
 
   return (
     <div className="container">
-      <select value={key} onChange={(e) => setKey(e.target.value)}>
-        <option value="">Select a key signature</option>
-        {keySignatures.map((keySignature) => (
-          <option key={keySignature} value={keySignature}>
-            {keySignature}
-          </option>
-        ))}
-      </select>
-      <Staff chosenKey={key} notes={notes} logMessage={logMessage} />
+      <form>
+        <fieldset>
+          <select value={key} onChange={(e) => setKey(e.target.value)}>
+            <option value="">Select a key signature</option>
+            {keySignatures.map((keySignature) => (
+              <option key={keySignature} value={keySignature}>
+                {keySignature}
+              </option>
+            ))}
+          </select>
+        </fieldset>
+        <fieldset>
+          <label>
+            <input
+              type="checkbox"
+              checked={landmarkEnabled}
+              onChange={() => setLandmarkEnabled(!landmarkEnabled)}
+            />
+            Enable landmark system
+          </label>
+        </fieldset>
+      </form>
+      <Staff
+        chosenKey={key}
+        notes={notes}
+        landmarkEnabled={landmarkEnabled}
+        logMessage={logMessage}
+      />
       <div className="messages">
         {messages.map((message, i) => (
           <div className="message" key={i}>
